@@ -12,7 +12,12 @@ ENV PRECOMPILE_ON_BOOT=0 UNICORN_WORKERS=2
 # DISCOURSE_ADMIN_PASSWORD, so no email round-trip is needed to get in (Railway only allows
 # outbound SMTP on Pro). /shared is the volume, so the marker survives redeploys.
 COPY railway-setup.rb /usr/local/share/railway/setup.rb
+
+# 2026.7.4 ships the new `live` plugin (voice and video rooms) without the discourse_voice_assets
+# gem it requires, so Rails can't load and every boot fails at db:migrate. Drop the plugin until
+# the image bundles the gem.
 RUN rm -f /etc/nginx/sites-enabled/default \
+ && rm -rf /var/www/discourse/plugins/live \
  && sed -i "/rake db:migrate' || exit 1/a [ -f /shared/.railway-setup-done ] || (su discourse -c 'bundle exec rails runner /usr/local/share/railway/setup.rb' && touch /shared/.railway-setup-done) || true" \
     /etc/service/unicorn/run \
  && grep -q railway-setup-done /etc/service/unicorn/run
