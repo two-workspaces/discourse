@@ -10,8 +10,7 @@ The stack is three services: Discourse, Postgres and Redis.
 
 - **The official image, on the stable line.** Discourse's web-only image runs nginx, the Rails server and the Sidekiq background workers in one service. It's pinned to the ESR release, which gets security fixes for a year without feature churn.
 - **Admin ready on boot.** The first boot migrates the database and creates an admin from your email and a generated password. No confirmation email, no mock mail server: three services, not four.
-- **Fast boots.** The image ships with its assets already compiled, so the template skips the recompile Discourse runs on every boot by default. Boots take about a minute instead of several.
-- **Upgrades that migrate themselves.** Every boot runs Discourse's migrations before serving, so bumping the image tag is the whole upgrade.
+- **Upgrades that migrate themselves.** Every boot runs Discourse's migrations and asset build before serving, so bumping the image tag is the whole upgrade.
 - **Private by default.** Only nginx has a public address. Postgres and Redis are on the private network, and both require a password.
 
 ## Common Use Cases
@@ -33,11 +32,11 @@ The stack is three services: Discourse, Postgres and Redis.
 
 ### Implementation Details
 
-**Sign in** at the Discourse service's Railway domain with the email you entered at deploy time and the `DISCOURSE_ADMIN_PASSWORD` value from the Discourse service's Variables tab. The first boot creates the database, so give it two or three minutes. Change the password afterwards in your profile's preferences; the variable is only read on first boot.
+**Sign in** at the Discourse service's Railway domain with the email you entered at deploy time and the `DISCOURSE_ADMIN_PASSWORD` value from the Discourse service's Variables tab. The first boot creates the database and builds assets, so give it three to five minutes. Change the password afterwards in your profile's preferences; the variable is only read on first boot.
 
 **Email.** Discourse works without email for the admin, but new members confirm their accounts by email, and notifications and digests go out by email. Railway only allows outbound SMTP on the Pro plan. Set `DISCOURSE_SMTP_ADDRESS`, `DISCOURSE_SMTP_USER_NAME`, `DISCOURSE_SMTP_PASSWORD` and `DISCOURSE_NOTIFICATION_EMAIL` on the Discourse service with any transactional provider (Postmark, Mailgun, SES, Brevo) and redeploy. Until then, you can invite members and approve them by hand from the admin panel.
 
-**Memory.** Around 1.3 GB at idle: two Rails workers, Sidekiq and nginx in the Discourse service, plus about 100 MB for Postgres and a few MB for Redis. Deploy on Hobby or above. For a busy forum raise `UNICORN_WORKERS` on the Discourse service; each worker adds about 250 MB.
+**Memory.** Around 1.2 GB at idle: about 1 GB for the Discourse service (two web workers, Sidekiq and nginx), 200 MB for Postgres and a few MB for Redis. Hobby or above is the comfortable fit. Under a 2 GB limit the template starts one web worker instead of two, so it also boots on a 1 GB plan, though a busy forum will want more. To scale up, raise `UNICORN_WORKERS` on the Discourse service.
 
 **Uploads and backups.** Uploads, avatars and Discourse's own backups live on the Discourse service's volume at `/shared`, and posts live in Postgres. Enable Railway's volume backups on both, or schedule Discourse's backups under Admin → Backups.
 
