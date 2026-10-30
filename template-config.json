@@ -11,7 +11,7 @@
         "restartPolicyMaxRetries": 10
       },
       "source": {
-        "image": "ghcr.io/two-workspaces/discourse:latest"
+        "image": "ghcr.io/two-workspaces/discourse:62c69aa"
       },
       "variables": {
         "PORT": {
@@ -20,7 +20,7 @@
           "isOptional": false
         },
         "DISCOURSE_ADMIN_EMAIL": {
-          "defaultValue": "",
+          "defaultValue": "draft-admin@zaur.app",
           "description": "Your email - the admin login, created on first boot",
           "isOptional": false
         },

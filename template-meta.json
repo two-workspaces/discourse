@@ -4,5 +4,6 @@
   "description": "Discourse forum with the admin ready on boot, no mail server needed",
   "category": "Other",
   "image": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/discourse.svg",
-  "card_desc": "Discourse community forum on the stable ESR release: admin created on first boot, migrations on every boot, email optional."
+  "card_desc": "Discourse community forum on the stable ESR release: admin created on first boot, migrations on every boot, email optional.",
+  "id": "3890cd79-9c68-4213-8c61-24372264125f"
 }
