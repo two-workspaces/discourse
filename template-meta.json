@@ -1,0 +1,8 @@
+{
+  "name": "Discourse",
+  "short_name": "Discourse Community",
+  "description": "Discourse forum with the admin ready on boot, no mail server needed",
+  "category": "Other",
+  "image": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/discourse.svg",
+  "card_desc": "Discourse community forum on the stable ESR release: admin created on first boot, migrations on every boot, email optional."
+}

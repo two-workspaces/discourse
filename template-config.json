@@ -1,0 +1,198 @@
+{
+  "services": {
+    "d2caf8b6-0bce-4780-bffb-ef54b14e1507": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/discourse.svg",
+      "name": "Discourse",
+      "build": {},
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": "/srv/status",
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "image": "ghcr.io/two-workspaces/discourse:latest"
+      },
+      "variables": {
+        "PORT": {
+          "defaultValue": "80",
+          "description": "Port nginx listens on in front of Discourse - leave as is",
+          "isOptional": false
+        },
+        "DISCOURSE_ADMIN_EMAIL": {
+          "defaultValue": "",
+          "description": "Your email - the admin login, created on first boot",
+          "isOptional": false
+        },
+        "DISCOURSE_ADMIN_PASSWORD": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Admin password, set on first boot only - copy it from here to log in, then change it in Discourse",
+          "isOptional": false
+        },
+        "DISCOURSE_DEVELOPER_EMAILS": {
+          "defaultValue": "${{DISCOURSE_ADMIN_EMAIL}}",
+          "description": "Emails that are always admins - leave as is",
+          "isOptional": false
+        },
+        "DISCOURSE_HOSTNAME": {
+          "defaultValue": "${{RAILWAY_PUBLIC_DOMAIN}}",
+          "description": "Domain used in links and emails - set it to your custom domain when you add one",
+          "isOptional": false
+        },
+        "DISCOURSE_DB_HOST": {
+          "defaultValue": "${{Postgres.RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Postgres host - private network, leave as is",
+          "isOptional": false
+        },
+        "DISCOURSE_DB_PORT": {
+          "defaultValue": "5432",
+          "description": "Postgres port",
+          "isOptional": false
+        },
+        "DISCOURSE_DB_NAME": {
+          "defaultValue": "${{Postgres.POSTGRES_DB}}",
+          "description": "Postgres database - leave as is",
+          "isOptional": false
+        },
+        "DISCOURSE_DB_USERNAME": {
+          "defaultValue": "${{Postgres.POSTGRES_USER}}",
+          "description": "Postgres user - leave as is",
+          "isOptional": false
+        },
+        "DISCOURSE_DB_PASSWORD": {
+          "defaultValue": "${{Postgres.POSTGRES_PASSWORD}}",
+          "description": "Postgres password - leave as is",
+          "isOptional": false
+        },
+        "DISCOURSE_REDIS_HOST": {
+          "defaultValue": "${{Redis.RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Redis host - private network, leave as is",
+          "isOptional": false
+        },
+        "DISCOURSE_REDIS_PORT": {
+          "defaultValue": "6379",
+          "description": "Redis port",
+          "isOptional": false
+        },
+        "DISCOURSE_REDIS_PASSWORD": {
+          "defaultValue": "${{Redis.REDIS_PASSWORD}}",
+          "description": "Redis password - leave as is",
+          "isOptional": false
+        },
+        "DISCOURSE_SMTP_ADDRESS": {
+          "defaultValue": "",
+          "description": "SMTP server for sign-up and notification emails (outbound SMTP needs Railway Pro)",
+          "isOptional": true
+        },
+        "DISCOURSE_SMTP_PORT": {
+          "defaultValue": "587",
+          "description": "SMTP port",
+          "isOptional": true
+        },
+        "DISCOURSE_SMTP_USER_NAME": {
+          "defaultValue": "",
+          "description": "SMTP user",
+          "isOptional": true
+        },
+        "DISCOURSE_SMTP_PASSWORD": {
+          "defaultValue": "",
+          "description": "SMTP password",
+          "isOptional": true
+        },
+        "DISCOURSE_NOTIFICATION_EMAIL": {
+          "defaultValue": "",
+          "description": "From address for emails, e.g. noreply@example.com",
+          "isOptional": true
+        },
+        "RAILWAY_HEALTHCHECK_TIMEOUT_SEC": {
+          "defaultValue": "600",
+          "description": "The first boot migrates the database before serving",
+          "isOptional": false
+        }
+      },
+      "networking": {
+        "serviceDomains": {
+          "<hasDomain>": {}
+        }
+      },
+      "volumeMounts": {
+        "d2caf8b6-0bce-4780-bffb-ef54b14e1507": {
+          "mountPath": "/shared"
+        }
+      }
+    },
+    "96fd4cab-3487-4af4-b6a2-8758b0fb1ea1": {
+      "icon": "https://devicons.railway.app/i/postgresql.svg",
+      "name": "Postgres",
+      "build": {},
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": null,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "image": "ghcr.io/railwayapp-templates/postgres-ssl:18"
+      },
+      "variables": {
+        "POSTGRES_DB": {
+          "defaultValue": "discourse",
+          "description": "Database name",
+          "isOptional": false
+        },
+        "POSTGRES_USER": {
+          "defaultValue": "discourse",
+          "description": "Database user",
+          "isOptional": false
+        },
+        "POSTGRES_PASSWORD": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Auto-generated database password",
+          "isOptional": false
+        },
+        "PGDATA": {
+          "defaultValue": "/var/lib/postgresql/data/pgdata",
+          "description": "Data subdirectory - keeps Postgres happy on Railway volumes",
+          "isOptional": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "60",
+          "description": "Time for Postgres to shut down cleanly on redeploy",
+          "isOptional": false
+        }
+      },
+      "networking": {
+        "serviceDomains": {}
+      },
+      "volumeMounts": {
+        "96fd4cab-3487-4af4-b6a2-8758b0fb1ea1": {
+          "mountPath": "/var/lib/postgresql/data"
+        }
+      }
+    },
+    "56616690-d128-4dd7-a7ea-b722d130a750": {
+      "icon": "https://devicons.railway.app/i/redis.svg",
+      "name": "Redis",
+      "build": {},
+      "deploy": {
+        "startCommand": "/bin/sh -c \"exec docker-entrypoint.sh redis-server --requirepass $REDIS_PASSWORD --save '' --appendonly no\"",
+        "healthcheckPath": null,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "image": "redis:8.10.2-alpine"
+      },
+      "variables": {
+        "REDIS_PASSWORD": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Auto-generated Redis password",
+          "isOptional": false
+        }
+      },
+      "networking": {
+        "serviceDomains": {}
+      }
+    }
+  }
+}
