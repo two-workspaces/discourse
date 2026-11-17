@@ -26,7 +26,7 @@ The stack is three services: Discourse, Postgres and Redis.
 
 ### Deployment Dependencies
 
-- [Discourse admin guide](https://meta.discourse.org/c/documentation/admins/)
+- [Discourse admin guide](https://meta.discourse.org/c/documentation/site-management/53)
 - [Discourse on GitHub](https://github.com/discourse/discourse)
 - [Template source on GitHub](https://github.com/two-workspaces/discourse)
 
